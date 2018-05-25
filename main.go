@@ -44,7 +44,7 @@ func main() {
 			newPath := filepath.Join(dir, newName)
 			// Chek for conflicts between oldPath and newPath
 			if _, err := os.Stat(newPath); !os.IsNotExist(err) {
-				fmt.Printf("Warning: file \"%s\" skipped. A file with the proposed name \"%s\" already exists.\n", path, newPath)
+				fmt.Printf("Skipping file \"%s\". A file with the proposed name \"%s\" already exists.\n", path, newPath)
 				return nil
 			}
 			// If not, rename the file
