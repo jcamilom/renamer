@@ -39,14 +39,21 @@ func main() {
 		if info.IsDir() {
 			return nil
 		} else if re.MatchString(info.Name()) {
-			newName := re.ReplaceAllString(info.Name(), replaceString)
 			dir := filepath.Dir(path)
-			err := os.Rename(path, filepath.Join(dir, newName))
+			newName := re.ReplaceAllString(info.Name(), replaceString)
+			newPath := filepath.Join(dir, newName)
+			// Chek for conflicts between oldPath and newPath
+			if _, err := os.Stat(newPath); !os.IsNotExist(err) {
+				fmt.Printf("Warning: file \"%s\" skipped. A file with the proposed name \"%s\" already exists.\n", path, newPath)
+				return nil
+			}
+			// If not, rename the file
+			err := os.Rename(path, newPath)
 			if err != nil {
 				fmt.Println("There was an error renaming the file. See below for more info.")
 				fmt.Printf("\n%v\n\n", err)
 			}
-			fmt.Printf("File \"%s\" in \"%s\" renamed to \"%s\" correctly.\n", info.Name(), dir, newName)
+			fmt.Printf("File \"%s\" renamed to \"%s\" correctly.\n", path, newPath)
 			//fmt.Printf("File \"%s\" in \"%s\" matches the provided regexp\n", info.Name(), dir)
 		}
 		return nil
